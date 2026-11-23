@@ -113,4 +113,124 @@ footer{margin-top:22px;color:var(--mu);font-size:.85rem}
 <div class="row">
 <div><label for="L">Длина, см</label><input id="L" type="number" min="0" inputmode="decimal" value="60"></div>
 <div><label for="W">Ширина, см</label><input id="W" type="number" min="0" inputmode="decimal" value="50"></div>
-<div>
+<div><label for="H">Высота, см</label><input id="H" type="number" min="0" inputmode="decimal" value="40"></div>
+</div>
+<div class="row">
+<div><label for="N">Мест, шт.</label><input id="N" type="number" min="1" step="1" inputmode="numeric" value="1"></div>
+<div><label for="K">Вес 1 места, кг</label><input id="K" type="number" min="0" inputmode="decimal" value="12"></div>
+<div></div>
+</div>
+<button class="btn" id="go">Рассчитать</button>
+<div class="res" id="out" aria-live="polite">Введите данные и нажмите «Рассчитать».</div>
+<p class="mu">Делители 6000 и 3000 зависят от перевозчика и тарифа: уточняйте их в его условиях. Калькулятор учебный.</p>
+</div>
+</section>
+
+<section id="quiz"></section>
+<section id="sit"></section>
+
+<section id="ai">
+<div class="card"><h2>Как в проекте используется ИИ</h2>
+<p>ИИ ускорил подготовку учебного материала: структуру сайта, код, черновики схемы, вопросов и пояснений. Каждый факт перед публикацией проверяется по официальным источникам. Тренажёр учебный и не заменяет договор, тариф перевозчика или консультацию специалиста.</p>
+<p class="mu">Жёлтые поля команда заполняет по своей реальной работе.</p></div>
+<div class="card"><h2>AI-паспорт проекта (приложение 2)</h2>
+<table>
+<tr><td>1. Название и направление</td><td>LogiTutor, направление AI Education</td></tr>
+<tr><td>2. Проблема и аудитория</td><td>Студентам логистических специальностей трудно запомнить, кто и когда платит и несёт риск по Incoterms, и правильно считать тарифицируемый вес. Аудитория: студенты колледжей.</td></tr>
+<tr><td>3. Инструменты ИИ</td><td>Claude (Anthropic) <span class="todo">+ другие, если использовали</span></td></tr>
+<tr><td>4. Вклад каждого инструмента</td><td>Claude: структура и код сайта, интерактивная схема, калькулятор, черновики вопросов и пояснений.</td></tr>
+<tr><td>5. Основные промпты</td><td><span class="todo">вставьте реальные промпты</span></td></tr>
+<tr><td>6. Материалы, созданные ИИ</td><td>Код сайта, схема этапов поставки, тексты пояснений, вопросы теста и кейсы.</td></tr>
+<tr><td>7. Сделано участниками самостоятельно</td><td><span class="todo">впишите: проверка, правки, свои вопросы</span></td></tr>
+<tr><td>8. Ошибки ИИ и исправления</td><td><span class="todo">впишите реальные найденные ошибки</span></td></tr>
+<tr><td>9. Источники для проверки</td><td>ICC, Incoterms 2020; условия и тарифы перевозчиков (делитель объёмного веса); IATA. <span class="todo">сверьте формулировки с текстами</span></td></tr>
+<tr><td>10. Персональные данные и безопасность</td><td>Сайт не собирает персональные данные: нет регистрации и форм отправки, введённые числа нигде не сохраняются.</td></tr>
+</table></div>
+</section>
+<footer>Городской конкурс «Технологии. Интеллект. Будущее», направление AI Education.</footer>
+</div>
+<script>
+var G=["Погрузка у продавца","Экспортное оформление","Доставка до порта или терминала отправления","Погрузка на борт или в транспорт","Основная перевозка","Импортное оформление и пошлины","Доставка до места назначения","Разгрузка в месте назначения"];
+var I=[
+["EXW","Ex Works (Франко-завод)",0,"BBBBBBBB",0,"","Продавец лишь предоставляет товар на своей территории. Погрузку, экспорт и всю перевозку организует покупатель."],
+["FCA","Free Carrier (Франко-перевозчик)",0,"SSSBBBBB",3,"","Продавец передаёт товар перевозчику в названном месте и очищает экспорт. Если место — склад продавца, он сам грузит товар в транспорт покупателя."],
+["CPT","Carriage Paid To (Перевозка оплачена до)",0,"SSSSSBSB",3,"","Продавец оплачивает перевозку до места назначения, но риск переходит уже при передаче первому перевозчику. Разгрузка на покупателе, если не включена в договор перевозки."],
+["CIP","Carriage and Insurance Paid To",0,"SSSSSBSB",3,"Продавец страхует груз: минимум по Institute Cargo Clauses (A)","Как CPT, плюс страхование за счёт продавца в пользу покупателя."],
+["DAP","Delivered at Place",0,"SSSSSBSB",7,"","Товар предоставлен в месте назначения на транспорте, готовым к разгрузке. Импортное оформление на покупателе."],
+["DPU","Delivered at Place Unloaded",0,"SSSSSBSS",8,"","Продавец доставляет и разгружает товар в месте назначения. В редакции 2020 заменило DAT."],
+["DDP","Delivered Duty Paid",0,"SSSSSSSB",7,"","Максимум обязанностей продавца: он оформляет импорт и платит пошлины. Разгружает покупатель."],
+["FAS","Free Alongside Ship",1,"SSSBBBBB",3,"","Товар помещён у борта судна в порту отгрузки. Погрузка на борт уже на покупателе."],
+["FOB","Free On Board",1,"SSSSBBBB",4,"","Продавец грузит товар на борт судна. Риск переходит на покупателя, когда товар на борту."],
+["CFR","Cost and Freight",1,"SSSSSBBB",4,"","Продавец оплачивает фрахт до порта назначения, но риск переходит на борту в порту отгрузки. Страхование не входит."],
+["CIF","Cost, Insurance and Freight",1,"SSSSSBBB",4,"Продавец страхует груз: минимум по Institute Cargo Clauses (C)","Как CFR, плюс страхование за счёт продавца."]
+];
+var cur=0;
+function show(k){
+ cur=k;var t=I[k];
+ document.querySelectorAll("#chips button").forEach(function(b,j){b.classList.toggle("on",j==k);b.setAttribute("aria-pressed",j==k)});
+ document.getElementById("cont").style.left=(t[4]/8*100)+"%";
+ document.getElementById("bar").innerHTML=t[3].split("").map(function(c,i){return '<b class="'+(c=="S"?"s":"")+'" style="animation-delay:'+(i*55)+'ms" title="'+G[i]+'">'+(i+1)+'</b>'}).join("");
+ document.getElementById("info").innerHTML='<h2>'+t[0]+'</h2><div><b>'+t[1]+'</b></div><span class="tag">'+(t[2]?"Только морской и внутренний водный транспорт":"Любой вид транспорта")+'</span>'+(t[5]?'<span class="tag">'+t[5]+'</span>':'')+'<p style="margin:6px 0 0">'+t[6]+'</p>';
+ var h="";
+ for(var i=0;i<=8;i++){
+  if(i==t[4])h+='<li class="risk"><span>Здесь риск переходит к покупателю</span></li>';
+  if(i<8)h+='<li class="step '+(t[3][i]=="S"?"s":"")+'" style="animation-delay:'+(120+i*45)+'ms"><span>'+G[i]+'</span><em>платит '+(t[3][i]=="S"?"продавец":"покупатель")+'</em></li>';
+ }
+ document.getElementById("way").innerHTML=h;
+}
+document.getElementById("chips").innerHTML=I.map(function(t,k){return '<button class="'+(t[2]?"sea":"")+'" data-k="'+k+'" style="animation-delay:'+(300+k*40)+'ms">'+t[0]+'</button>'}).join("");
+document.querySelectorAll("#chips button").forEach(function(b){b.onclick=function(){show(+b.dataset.k)}});
+show(0);
+var Q=[
+{q:"Сколько правил содержит Incoterms 2020?",o:["9","11","13","15"],a:1,e:"Одиннадцать: семь для любого вида транспорта и четыре для морского и внутреннего водного.",s:"ICC, Incoterms 2020"},
+{q:"Какое правило возлагает на продавца максимум обязанностей, включая импортные пошлины?",o:["EXW","FOB","DDP","CIF"],a:2,e:"DDP: продавец сам оформляет импорт и платит пошлины.",s:"ICC, Incoterms 2020"},
+{q:"Какая группа правил предназначена только для морского и внутреннего водного транспорта?",o:["FCA, CPT, DAP","FOB, CFR, CIF","EXW, DDP","CIP, DPU"],a:1,e:"Только для воды: FAS, FOB, CFR и CIF.",s:"ICC, Incoterms 2020"},
+{q:"Какое правило в редакции 2020 заменило DAT?",o:["DAP","DDP","DPU","CPT"],a:2,e:"DAT (Delivered at Terminal) стало DPU (Delivered at Place Unloaded): разгрузка возможна в любом месте.",s:"ICC, Incoterms 2020"},
+{q:"Какое минимальное страховое покрытие требует CIP в Incoterms 2020?",o:["Clauses (A)","Clauses (B)","Clauses (C)","Страхование не нужно"],a:0,e:"CIP требует Institute Cargo Clauses (A), а CIF только (C).",s:"ICC, Incoterms 2020"},
+{q:"Когда по FOB риск переходит на покупателя?",o:["При выходе со склада продавца","Когда товар на борту судна в порту отгрузки","При прибытии в порт назначения","При разгрузке у покупателя"],a:1,e:"FOB: риск переходит, когда товар погружен на борт судна в порту отгрузки.",s:"ICC, Incoterms 2020"},
+{q:"Коробка 60×50×40 см. Каков объёмный вес для авиа (делитель 6000)?",o:["12 кг","20 кг","50 кг","120 кг"],a:1,e:"60×50×40 = 120 000 см³; 120 000 ÷ 6000 = 20 кг.",s:"Формула объёмного веса; условия перевозчика"},
+{q:"Морской LCL: 3 м³ и 2,2 т (1 м³ = 1 т). Какая масса тарифицируется?",o:["2,2 т","3 т","5,2 т","1 т"],a:1,e:"Объёмная масса 3 т больше фактической 2,2 т, тарифицируется 3 т.",s:"Условия перевозчика (правило W/M)"}
+];
+var R=[
+{q:"Продавец доставляет груз на склад покупателя и разгружает его, импорт оформляет покупатель. Какое правило?",o:["DDP","DPU","EXW","FOB"],a:1,e:"DPU: продавец доставляет и разгружает. DDP потребовал бы ещё и импортной очистки продавцом.",s:"ICC, Incoterms 2020"},
+{q:"Покупатель забирает груз своим перевозчиком, а экспорт оформляет продавец. Какое правило?",o:["EXW","FCA","CPT","DAP"],a:1,e:"FCA: продавец передаёт товар перевозчику и очищает экспорт. По EXW экспорт оформляет покупатель.",s:"ICC, Incoterms 2020"},
+{q:"Морской контейнер: продавец платит фрахт до порта назначения, страхует покупатель, риск переходит на борту. Какое правило?",o:["CIF","CFR","FOB","FAS"],a:1,e:"CFR: фрахт платит продавец, страхование не входит, риск переходит на борту в порту отгрузки.",s:"ICC, Incoterms 2020"},
+{q:"Авто: фактический вес места 80 кг, размеры 100×80×60 см, делитель 3000. Какой вес тарифицируется?",o:["80 кг","160 кг","240 кг","48 кг"],a:1,e:"100×80×60 = 480 000 см³; ÷ 3000 = 160 кг, что больше 80 кг.",s:"Формула объёмного веса; условия перевозчика"}
+];
+function quiz(el,list){
+ var i=0,s=0;
+ function draw(){
+  if(i>=list.length){
+   el.innerHTML='<div class="card"><h2>Результат: '+s+' из '+list.length+'</h2><p>'+(s==list.length?"Отлично!":"Откройте схему и пройдите ещё раз.")+'</p><button class="btn" id="r">Пройти заново</button></div>';
+   el.querySelector("#r").onclick=function(){i=0;s=0;draw()};return;
+  }
+  var q=list[i];
+  el.innerHTML='<div class="card"><p class="mu">Вопрос '+(i+1)+' из '+list.length+'</p><h2>'+q.q+'</h2>'+q.o.map(function(t,k){return '<button class="opt" data-k="'+k+'">'+t+'</button>'}).join("")+'<div id="fb"></div></div>';
+  var bs=el.querySelectorAll(".opt");
+  bs.forEach(function(b){b.onclick=function(){
+   var k=+b.dataset.k;
+   bs.forEach(function(x,j){x.disabled=true;if(j==q.a)x.classList.add("ok")});
+   if(k==q.a)s++;else b.classList.add("bad");
+   el.querySelector("#fb").innerHTML='<p>'+q.e+'</p><p class="mu">Источник для проверки: '+q.s+'</p><button class="btn" id="n">Дальше</button>';
+   el.querySelector("#n").onclick=function(){i++;draw()};
+  }});
+ }
+ draw();
+}
+quiz(document.getElementById("quiz"),Q);
+quiz(document.getElementById("sit"),R);
+function f(n){return n.toLocaleString("ru-RU",{maximumFractionDigits:2})}
+document.getElementById("go").onclick=function(){
+ var g=function(id){return parseFloat(document.getElementById(id).value)};
+ var L=g("L"),W=g("W"),H=g("H"),N=g("N"),K=g("K"),m=document.getElementById("mode").value,o=document.getElementById("out");
+ if(!(L>0&&W>0&&H>0&&N>=1&&K>=0)){o.textContent="Проверьте данные: размеры больше 0, мест не меньше 1.";return}
+ var cm3=L*W*H*N,m3=cm3/1e6,act=K*N,vol=m==="sea"?m3*1000:cm3/parseFloat(m),ch=Math.max(act,vol);
+ o.innerHTML="Объём: <b>"+f(m3)+" м³</b><br>Фактический вес: <b>"+f(act)+" кг</b><br>Объёмный вес: <b>"+f(vol)+" кг</b><br>Тарифицируется: <b>"+f(ch)+" кг</b> ("+(vol>act?"объёмный":"фактический")+" вес больше)";
+};
+document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){
+ document.querySelectorAll("#tabs button").forEach(function(x){x.classList.toggle("on",x==b)});
+ document.querySelectorAll("section").forEach(function(s){s.classList.toggle("on",s.id==b.dataset.t)});
+}});
+</script>
+</body>
+</html>
